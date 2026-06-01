@@ -18,11 +18,10 @@ with sync_playwright() as p:
     content = page.content()
 
     
-   keywords = [
+keywords = [
     "○",
     "◯"
 ]
-    
 
     found = any(k in content for k in keywords)
 
