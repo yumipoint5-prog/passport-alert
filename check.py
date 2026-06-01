@@ -23,9 +23,9 @@ keywords = [
     "◯"
 ]
 
-    found = any(k in content for k in keywords)
+found = any(k in content for k in keywords)
 
-    # 条件追加
+# 条件追加
 target_slots = [
     "06/11 15:00",
     "06/11 15:10",
@@ -69,7 +69,8 @@ target_slots = [
     "06/12 17:40",
     "06/12 17:50",
 ]
-    slot_found = any(slot in content for slot in target_slots)
+
+slot_found = any(slot in content for slot in target_slots)
 
     if found and slot_found:
         notify("希望日時にパスポート予約空きあり！")
