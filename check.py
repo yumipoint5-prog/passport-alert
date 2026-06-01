@@ -1,47 +1,78 @@
 from playwright.sync_api import sync_playwright
-import requests
+from datetime import datetime
 import os
 
-URL = "https://sfyoyaku.rsvsys.jp"
+TARGET_URL = "https://sfyoyaku.rsvsys.jp/reservations/calendar"
 
-WEBHOOK = os.environ.get("DISCORD_WEBHOOK")
-
-TARGETS = [
-    ("6/11", 15),
-    ("6/12", 13),
-]
-
-def notify(msg):
-    requests.post(WEBHOOK, json={
-        "content": msg
-    })
+def notify(message):
+    os.system(f'''
+    osascript -e 'display notification "{message}" with title "Passport Alert"'
+    ''')
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
-
     page = browser.new_page()
 
-    page.goto(URL, wait_until="networkidle")
+    page.goto(TARGET_URL)
 
     content = page.content()
 
-    found_slots = []
+    
+   keywords = [
+    "○",
+    "◯"
+]
+    
 
-    for date, hour in TARGETS:
-        for h in range(hour, 24):
-            patterns = [
-                f"{date} {h}:00",
-                f"{date} {h}時",
-                f"{date}&nbsp;{h}",
-            ]
+    found = any(k in content for k in keywords)
 
-            if any(p in content for p in patterns):
-                found_slots.append(f"{date} {h}:00以降")
+    # 条件追加
+target_slots = [
+    "06/11 15:00",
+    "06/11 15:10",
+    "06/11 15:20",
+    "06/11 15:30",
+    "06/11 15:40",
+    "06/11 15:50",
 
-    if found_slots:
-        notify(
-            "予約空きの可能性:\n" +
-            "\n".join(found_slots)
-        )
+    "06/12 13:00",
+    "06/12 13:10",
+    "06/12 13:20",
+    "06/12 13:30",
+    "06/12 13:40",
+    "06/12 13:50",
+
+    "06/12 14:00",
+    "06/12 14:10",
+    "06/12 14:20",
+    "06/12 14:30",
+    "06/12 14:40",
+    "06/12 14:50",
+
+    "06/12 15:00",
+    "06/12 15:10",
+    "06/12 15:20",
+    "06/12 15:30",
+    "06/12 15:40",
+    "06/12 15:50",
+
+    "06/12 16:00",
+    "06/12 16:10",
+    "06/12 16:20",
+    "06/12 16:30",
+    "06/12 16:40",
+    "06/12 16:50",
+
+    "06/12 17:00",
+    "06/12 17:10",
+    "06/12 17:20",
+    "06/12 17:30",
+    "06/12 17:40",
+    "06/12 17:50",
+]
+    slot_found = any(slot in content for slot in target_slots)
+
+    if found and slot_found:
+        notify("希望日時にパスポート予約空きあり！")
 
     browser.close()
