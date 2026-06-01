@@ -72,7 +72,7 @@ target_slots = [
 
 slot_found = any(slot in content for slot in target_slots)
 
-    if found and slot_found:
-        notify("希望日時にパスポート予約空きあり！")
+if found and slot_found:
+notify("希望日時にパスポート予約空きあり！")
 
-    browser.close()
+browser.close()
